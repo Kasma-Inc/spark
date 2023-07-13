@@ -90,7 +90,7 @@ statement
         (LIKE? pattern=stringLit)?                                        #showNamespaces
     | createTableHeader (LEFT_PAREN createOrReplaceTableColTypeList RIGHT_PAREN)? tableProvider?
         createTableClauses
-        (AS? query)?                                                   #createTable
+        (AS? (NODE | EDGE | query))?                                                   #createTable
     | CREATE TABLE (IF NOT EXISTS)? target=tableIdentifier
         LIKE source=tableIdentifier
         (tableProvider |
@@ -896,12 +896,16 @@ expressionSeq
     : expression (COMMA expression)*
     ;
 
+matchExpression
+    : MATCH LEFT_PAREN leftNode=multipartIdentifier MINUS LEFT_PAREN edgeTable=multipartIdentifier RIGHT_PAREN ARROW rightNode=multipartIdentifier RIGHT_PAREN ;
+
 booleanExpression
     : NOT booleanExpression                                        #logicalNot
     | EXISTS LEFT_PAREN query RIGHT_PAREN                          #exists
     | valueExpression predicate?                                   #predicated
     | left=booleanExpression operator=AND right=booleanExpression  #logicalBinary
     | left=booleanExpression operator=OR right=booleanExpression   #logicalBinary
+    | matchExpression                                              #match
     ;
 
 predicate
