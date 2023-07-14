@@ -1620,9 +1620,9 @@ class AstBuilder extends DataTypeAstBuilder with SQLConfHelper with Logging {
     val rightExpress = UnresolvedAttribute(visitMultipartIdentifier(ctx.rightNode) :+ "node_id")
     val leftExpress = UnresolvedAttribute(visitMultipartIdentifier(ctx.leftNode) :+ "node_id")
 
-    val left = EqualTo(rightExpress,
+    val left = EqualTo(leftExpress,
     UnresolvedAttribute(visitMultipartIdentifier(ctx.edgeTable) :+ "from_id"))
-    val right = EqualTo(leftExpress,
+    val right = EqualTo(rightExpress,
     UnresolvedAttribute(visitMultipartIdentifier(ctx.edgeTable) :+ "to_id"))
     And(left, right)
   }

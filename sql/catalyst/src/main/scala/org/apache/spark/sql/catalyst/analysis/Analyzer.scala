@@ -1382,7 +1382,7 @@ class Analyzer(override val catalogManager: CatalogManager) extends RuleExecutor
     * add EdgeId/NodeId for graph table;
     */
     case class GraphTable(tableType: String, tableName: String, Id: Long) {
-      override def toString(): String = s"{type:`$tableType`,table:`$tableName`,ID:`$Id`}"
+      override def toString(): String = s"type:$tableType,table:$tableName,ID:$Id"
     }
 
 
