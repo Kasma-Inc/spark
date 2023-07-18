@@ -44,7 +44,7 @@ import org.apache.spark.sql.catalyst.util.{CharVarcharUtils, DateTimeUtils, Gene
 import org.apache.spark.sql.catalyst.util.DateTimeUtils.{convertSpecialDate, convertSpecialTimestamp, convertSpecialTimestampNTZ, getZoneId, stringToDate, stringToTimestamp, stringToTimestampWithoutTimeZone}
 import org.apache.spark.sql.connector.catalog.{CatalogV2Util, SupportsNamespaces, TableCatalog}
 import org.apache.spark.sql.connector.catalog.TableChange.ColumnPosition
-import org.apache.spark.sql.connector.expressions.{ApplyTransform, BucketTransform, DaysTransform, Expression => V2Expression, FieldReference, HoursTransform, IdentityTransform, LiteralValue, MonthsTransform, Transform, YearsTransform}
+import org.apache.spark.sql.connector.expressions.{ApplyTransform, BucketTransform, DaysTransform, FieldReference, HoursTransform, IdentityTransform, LiteralValue, MonthsTransform, Transform, YearsTransform, Expression => V2Expression}
 import org.apache.spark.sql.errors.{QueryCompilationErrors, QueryParsingErrors}
 import org.apache.spark.sql.internal.SQLConf
 import org.apache.spark.sql.types._
@@ -3879,10 +3879,13 @@ class AstBuilder extends DataTypeAstBuilder with SQLConfHelper with Logging {
     if (ctx.NODE != null && ctx.EDGE != null) {
       operationNotAllowed("Not Simultaneously Allowed CREATE TABLE AS NODE And EDGE", ctx)
     }
+
     var graphCol: Seq[StructField] = Seq();
     if (ctx.NODE != null) {
       val builder = new MetadataBuilder;
-      builder.putLong("AutoIncrement", 0);
+      builder.putLong("AutoIncrement", 0)
+//        .putString(METADATA_COL_ATTR_KEY, "node_id")
+//        .putBoolean(QUALIFIED_ACCESS_ONLY, true)
       graphCol = graphCol :+ StructField("node_id", StringType,
         nullable = false, builder.build());
       // scalastyle:off
@@ -3891,7 +3894,9 @@ class AstBuilder extends DataTypeAstBuilder with SQLConfHelper with Logging {
     // Add edge props
     if (ctx.EDGE != null) {
       val builder = new MetadataBuilder;
-      builder.putLong("AutoIncrement", 0);
+      builder.putLong("AutoIncrement", 0)
+//        .putString(METADATA_COL_ATTR_KEY, "edge_id")
+//        .putBoolean(QUALIFIED_ACCESS_ONLY, true)
       graphCol = graphCol ++
         Seq(
           StructField("from_id", StringType, nullable = false),

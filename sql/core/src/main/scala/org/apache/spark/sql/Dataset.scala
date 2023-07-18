@@ -97,6 +97,9 @@ private[sql] object Dataset {
     : DataFrame = sparkSession.withActive {
     val qe = new QueryExecution(sparkSession, logicalPlan, tracker)
     qe.assertAnalyzed()
+    // scalastyle:off
+//    println("qe.analyzed.schema: ", qe.analyzed.schema)
+//    println("qe.analyzed.output: ", qe.analyzed.output)
     new Dataset[Row](qe, RowEncoder(qe.analyzed.schema))
   }
 }
@@ -226,6 +229,7 @@ class Dataset[T] private[sql](
     plan
   }
 
+//  println("DataSet LogicalPlan:", logicalPlan)
   /**
    * Currently [[ExpressionEncoder]] is the only implementation of [[Encoder]], here we turn the
    * passed in encoder to [[ExpressionEncoder]] explicitly, and mark it implicit so that we can use
@@ -284,6 +288,7 @@ class Dataset[T] private[sql](
     // first `truncate-3` and "..."
     schema.fieldNames.map(SchemaUtils.escapeMetaCharacters).toSeq +: data.map { row =>
       row.toSeq.map { cell =>
+//        println("cell ", cell.toString)
         assert(cell != null, "ToPrettyString is not nullable and should not return null value")
         // Escapes meta-characters not to break the `showString` format
         val str = SchemaUtils.escapeMetaCharacters(cell.toString)

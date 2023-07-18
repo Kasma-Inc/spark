@@ -4321,6 +4321,13 @@ object SQLConf {
       .checkValue(_ >= 0, "The threshold of cached local relations must not be negative")
       .createWithDefault(64 * 1024 * 1024)
 
+  val SHOW_GRAPH_TABLE_INNER_FIELD =
+    buildConf("spark.sql.showGraphTableInnerField")
+      .doc("This Boolean value determines whether it is displayed GraphTable' inner field")
+      .version("3.5.0")
+      .booleanConf
+      .createWithDefault(false)
+
   /**
    * Holds information about keys that have been deprecated.
    *
@@ -4457,6 +4464,7 @@ class SQLConf extends Serializable with Logging with SqlApiConf {
 
   def analyzerMaxIterations: Int = getConf(ANALYZER_MAX_ITERATIONS)
 
+  def isShowGraphTableInnerField : Boolean = getConf(SHOW_GRAPH_TABLE_INNER_FIELD)
   def optimizerExcludedRules: Option[String] = getConf(OPTIMIZER_EXCLUDED_RULES)
 
   def optimizerMaxIterations: Int = getConf(OPTIMIZER_MAX_ITERATIONS)
@@ -4875,6 +4883,9 @@ class SQLConf extends Serializable with Logging with SqlApiConf {
 
   def ndvMaxError: Double = getConf(NDV_MAX_ERROR)
 
+  def GraphInnerCols: Seq[String] = {
+    Seq("node_id") :+ "edge_id" :+ "from_id" :+ "to_id"
+  }
   def histogramEnabled: Boolean = getConf(HISTOGRAM_ENABLED)
 
   def histogramNumBins: Int = getConf(HISTOGRAM_NUM_BINS)
